@@ -1,6 +1,6 @@
 /**
  * @author Gustavo Henriques Vieira
- * @version 1.0
+ * @version 2.1.0
  */
 
 public class Node {
@@ -9,7 +9,8 @@ public class Node {
     private Node next;
     private Node previous;
 
-    /** Metodo para definir um valor para a chave
+    /**
+     * Metodo para definir um valor para a chave
      *
      * @param key Valor para ser definido como chave
      */
@@ -17,7 +18,8 @@ public class Node {
         this.key = key;
     }
 
-    /** Metodo para definir um no anterior ao atual
+    /**
+     * Metodo para definir um no anterior ao atual
      *
      * @param previous No para ser definido como anterior do no atual
      */
@@ -25,7 +27,8 @@ public class Node {
         this.previous = previous;
     }
 
-    /** Metodo para definir um no sucessor ao atual
+    /**
+     * Metodo para definir um no sucessor ao atual
      *
      * @param next No para ser definido como sucessor do no atual
      */
@@ -33,7 +36,8 @@ public class Node {
         this.next = next;
     }
 
-    /** Metodo para obter o valor da chave do no
+    /**
+     * Metodo para obter o valor da chave do no
      *
      * @return double
      */
@@ -41,7 +45,8 @@ public class Node {
         return key;
     }
 
-    /** Metodo para obter o no sucessor
+    /**
+     * Metodo para obter o no sucessor
      *
      * @return Node
      */
@@ -49,7 +54,8 @@ public class Node {
         return next;
     }
 
-    /** Metodo para obter o no anterior
+    /**
+     * Metodo para obter o no anterior
      *
      * @return Node
      */
@@ -57,7 +63,8 @@ public class Node {
         return previous;
     }
 
-    /** Metodo que verifica se o no atual possui um no sucessor
+    /**
+     * Metodo que verifica se o no atual possui um no sucessor
      *
      * @return boolean
      */
@@ -65,7 +72,8 @@ public class Node {
         return getNext() != null;
     }
 
-    /** Metodo que verifica se o no atual possui um no anterior
+    /**
+     * Metodo que verifica se o no atual possui um no anterior
      *
      * @return boolean
      */

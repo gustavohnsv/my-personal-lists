@@ -5,16 +5,17 @@
 
 import org.jetbrains.annotations.NotNull;
 
-public class LinkedList extends Node implements MyLists<LinkedList> {
+public class Queue extends Node implements MyLists<Queue> {
 
     private Node root;
 
-    public LinkedList() {
+
+    public Queue() {
         this.root = null;
     }
 
     /**
-     * Metodo que verifica se a lista esta vazia
+     * Metodo que verifica se a fila esta vazia
      *
      * @return boolean
      */
@@ -26,7 +27,7 @@ public class LinkedList extends Node implements MyLists<LinkedList> {
     /**
      * Metodo que cria um novo no com o valor passado como chave
      *
-     * @param key Valor passado como chave
+     * @param key Valor da chave para a procura do no
      * @return Node
      */
     private @NotNull Node createNode(double key) {
@@ -36,9 +37,9 @@ public class LinkedList extends Node implements MyLists<LinkedList> {
     }
 
     /**
-     * Metodo que cria um novo no na lista, mantendo a ordem crescente das chaves
+     * Metodo que adiciona um no ao inicio da fila
      *
-     * @param key Chave da insercao
+     * @param key Valor passado como chave
      * @return boolean
      */
     @Override
@@ -47,57 +48,50 @@ public class LinkedList extends Node implements MyLists<LinkedList> {
         if (this.isEmpty()) {
             this.setKey(key);
             root = this;
-            return true;
         } else {
-            Node aux = root;
-            Node previous = null;
-            while (aux != null && aux.getKey() < key) {
-                previous = aux;
-                aux = aux.getNext();
-            }
-            if (previous == null) {
-                newNode.setNext(root);
-                root = newNode;
-                return true;
-            } else if (aux == null) {
-                previous.setNext(newNode);
-                return true;
-            } else {
-                previous.setNext(newNode);
-                newNode.setNext(aux);
-                return true;
-            }
-        }
-    }
-
-    /**
-     * Metodo que remove um no da lista, mantendo a ordem crescente das chaves
-     *
-     * @param key Chave para a exclusao
-     * @return boolean
-     */
-    @Override
-    public boolean removeNode(double key) {
-        Node aux = root;
-        Node previous = aux;
-        while (aux != null && aux.getKey() < key) {
-            previous = aux;
-            aux = aux.getNext();
-        }
-        if (aux == null) {
-            return false;
-        } else if (aux == root) {
-            root = aux.getNext();
-            aux.setNext(null);
-        } else {
-            previous.setNext(aux.getNext());
-            aux.setNext(null);
+            newNode.setNext(root);
+            root = newNode;
         }
         return true;
     }
 
     /**
-     * Metodo que modifica um no existente da lista, dada a chave passdada como parametro e
+     * Metodo que remove um no da fila
+     *
+     * @param key Valor passado como chave
+     * @return boolean
+     */
+    @Override
+    public boolean removeNode(double key) {
+        if (isEmpty()) {
+            return false;
+        }
+        Node aux = findNode(key);
+        Node previous = root;
+        while (previous != null && previous.getNext() != aux) {
+            previous = previous.getNext();
+        }
+        if (aux == null) {
+            return false;
+        }
+        if (aux == root) {
+            if (!aux.hasNext()) {
+                root = null;
+            } else {
+                root = aux.getNext();
+            }
+        } else {
+            if (!aux.hasNext()) {
+                previous.setNext(null);
+            } else {
+                previous.setNext(aux.getNext());
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Metodo que modifica um no existente da fila, dada a chave passdada como parametro e
      * muda seu valor para uma nova chave
      *
      * @param oldKey Valor da chave antiga
@@ -111,7 +105,7 @@ public class LinkedList extends Node implements MyLists<LinkedList> {
     }
 
     /**
-     * Metodo que procura por um no na lista, dada a chave passada como parametro
+     * Metodo que procura por um no na fila, dada a chave passada como parametro
      *
      * @param key Chave para a busca
      * @return Node
@@ -129,7 +123,7 @@ public class LinkedList extends Node implements MyLists<LinkedList> {
     }
 
     /**
-     * Metodo que exibe a lista
+     * Metodo que exibe os nos da fila
      */
     @Override
     public void printNodes() {
@@ -141,7 +135,7 @@ public class LinkedList extends Node implements MyLists<LinkedList> {
     }
 
     /**
-     * Metodo que exibe as informacoes de um no especifico, dada uma chave fornecida como parametro
+     * Metodo que exibe as informacoes de um no da fila
      *
      * @param key Chave do no que sera exibido
      */
@@ -156,7 +150,7 @@ public class LinkedList extends Node implements MyLists<LinkedList> {
     }
 
     /**
-     * Metodo que verifica se um no com uma chave presente na lista existe
+     * Metodo que verifica se um no com uma chave presente na fila existe
      *
      * @param key Chave do no que sera procurado
      * @return boolean
@@ -173,57 +167,74 @@ public class LinkedList extends Node implements MyLists<LinkedList> {
      * @param node      No iterador de cada funcao
      * @param response  No raiz que sera retornado
      * @param fromIndex Chave em que a sublista comecara
-     * @param toIndex   Chave em que a sublista acabara (inclui ate toIndex - 1)
+     * @param toIndex   Chave em que a sublista acabara (inclui ate toIndex-1)
      */
-    private void generateLinkedList(Node node, LinkedList response, double fromIndex, double toIndex) {
+    private void generateQueue(Node node, Queue response, double fromIndex, double toIndex) {
         while (node != null) {
             if (node.getKey() >= fromIndex && node.getKey() < toIndex) {
                 response.addNode(node.getKey());
-            } else {
-                return;
             }
             node = node.getNext();
         }
     }
 
     /**
-     * Metodo que retorna uma nova lista a partir de uma sublista dentro de um intervalo especifico
+     * Metodo que retorna uma nova fila a partir de uma sublista dentro de um intervalo especifico
      *
      * @param fromIndex Valor em que comeca a lista
      * @param toIndex   Valor em que a lista acaba (toIndex - 1)
-     * @return BinaryTree
+     * @return Queue
      */
     @Override
-    public LinkedList subList(double fromIndex, double toIndex) {
-        LinkedList response = new LinkedList();
-        generateLinkedList(root, response, fromIndex, toIndex);
+    public Queue subList(double fromIndex, double toIndex) {
+        Queue response = new Queue();
+        generateQueue(root, response, fromIndex, toIndex);
         return response;
     }
 
     /**
-     * Metodo que exibe a maior chave a partir de uma lista
+     * Metodo que exibe a maior chave a partir de uma fila
      *
-     * @param linkedList Tipo da lista utilizada
+     * @param queue Tipo da lista utilizada
      * @return double
      */
     @Override
-    public double findMax(LinkedList linkedList) {
-        Node aux = linkedList;
-        while (aux.hasNext()) {
-            aux = aux.getNext();
+    public double findMax(Queue queue) {
+        if (queue.isEmpty()) {
+            return Integer.MAX_VALUE;
+        } else {
+            Node aux = queue;
+            double response = Integer.MIN_VALUE;
+            while (aux != null) {
+                if (aux.getKey() > response) {
+                    response = aux.getKey();
+                }
+                aux = aux.getNext();
+            }
+            return response;
         }
-        return aux.getKey();
     }
 
     /**
-     * Metodo que exibe a menor chave a partir de uma lista
+     * Metodo que exibe a menor chave a partir de uma fila
      *
-     * @param linkedList Tipo da lista utilizada
+     * @param queue Tipo da lista utilizada
      * @return double
      */
     @Override
-    public double findMin(LinkedList linkedList) {
-        return linkedList.root.getKey();
+    public double findMin(Queue queue) {
+        if (queue.isEmpty()) {
+            return Integer.MIN_VALUE;
+        } else {
+            Node aux = queue;
+            double response = Integer.MIN_VALUE;
+            while (aux != null) {
+                if (aux.getKey() < response) {
+                    response = aux.getKey();
+                }
+                aux = aux.getNext();
+            }
+            return response;
+        }
     }
-
 }

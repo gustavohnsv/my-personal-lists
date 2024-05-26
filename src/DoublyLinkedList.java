@@ -5,12 +5,12 @@
 
 import org.jetbrains.annotations.NotNull;
 
-public class LinkedList extends Node implements MyLists<LinkedList> {
+public class DoublyLinkedList extends Node implements MyLists<DoublyLinkedList> {
 
     private Node root;
 
-    public LinkedList() {
-        this.root = null;
+    public DoublyLinkedList() {
+        root = null;
     }
 
     /**
@@ -24,9 +24,9 @@ public class LinkedList extends Node implements MyLists<LinkedList> {
     }
 
     /**
-     * Metodo que cria um novo no com o valor passado como chave
+     * Metodo que cria um novo no com o valor passdado como chave
      *
-     * @param key Valor passado como chave
+     * @param key Valor da chave para a procura do no
      * @return Node
      */
     private @NotNull Node createNode(double key) {
@@ -36,9 +36,9 @@ public class LinkedList extends Node implements MyLists<LinkedList> {
     }
 
     /**
-     * Metodo que cria um novo no na lista, mantendo a ordem crescente das chaves
+     * Metodo que adiciona um no na lista em ordem crescente
      *
-     * @param key Chave da insercao
+     * @param key Valor passado como chave
      * @return boolean
      */
     @Override
@@ -50,50 +50,62 @@ public class LinkedList extends Node implements MyLists<LinkedList> {
             return true;
         } else {
             Node aux = root;
-            Node previous = null;
-            while (aux != null && aux.getKey() < key) {
-                previous = aux;
+            while (aux.getNext() != null && aux.getNext().getKey() < key) {
                 aux = aux.getNext();
             }
-            if (previous == null) {
-                newNode.setNext(root);
-                root = newNode;
+            if (aux == root) {
+                if (aux.getKey() > key) {
+                    aux.setPrevious(newNode);
+                    newNode.setNext(aux);
+                    root = newNode;
+                    root.setKey(key);
+                } else {
+                    aux.setNext(newNode);
+                    newNode.setPrevious(aux);
+                }
                 return true;
-            } else if (aux == null) {
-                previous.setNext(newNode);
+            } else if (!aux.hasNext()) {
+                aux.setNext(newNode);
+                newNode.setPrevious(aux);
                 return true;
             } else {
-                previous.setNext(newNode);
-                newNode.setNext(aux);
+                Node node = aux.getNext();
+                newNode.setNext(node);
+                newNode.setPrevious(aux);
+                aux.setNext(newNode);
+                node.setPrevious(newNode);
                 return true;
             }
         }
     }
 
     /**
-     * Metodo que remove um no da lista, mantendo a ordem crescente das chaves
+     * Metodo que remove um no da lista mantendo a ordem crescente
      *
-     * @param key Chave para a exclusao
+     * @param key Double
      * @return boolean
      */
     @Override
     public boolean removeNode(double key) {
-        Node aux = root;
-        Node previous = aux;
-        while (aux != null && aux.getKey() < key) {
-            previous = aux;
-            aux = aux.getNext();
-        }
-        if (aux == null) {
-            return false;
-        } else if (aux == root) {
+        Node aux = findNode(key);
+        if (aux == root) {
+            if (aux.hasNext()) {
+                aux.getNext().setPrevious(null);
+            }
             root = aux.getNext();
             aux.setNext(null);
+            return true;
+        } else if (!aux.hasNext()) {
+            aux.getPrevious().setNext(null);
+            aux.setPrevious(null);
+            return true;
         } else {
-            previous.setNext(aux.getNext());
+            aux.getPrevious().setNext(aux.getNext());
+            aux.getNext().setPrevious(aux.getPrevious());
             aux.setNext(null);
+            aux.setPrevious(null);
+            return true;
         }
-        return true;
     }
 
     /**
@@ -106,7 +118,7 @@ public class LinkedList extends Node implements MyLists<LinkedList> {
      */
     @Override
     public boolean modifyNode(double oldKey, double newKey) {
-        //   Node aux = findNode(oldKey); Caso queira aproveitar algo como registro, etc
+        // Node aux = findNode(oldKey);
         return removeNode(oldKey) && addNode(newKey);
     }
 
@@ -129,7 +141,7 @@ public class LinkedList extends Node implements MyLists<LinkedList> {
     }
 
     /**
-     * Metodo que exibe a lista
+     * Metodo que exibe os nos da lista
      */
     @Override
     public void printNodes() {
@@ -141,7 +153,7 @@ public class LinkedList extends Node implements MyLists<LinkedList> {
     }
 
     /**
-     * Metodo que exibe as informacoes de um no especifico, dada uma chave fornecida como parametro
+     * Metodo que exibe as informacoes de um no da lista
      *
      * @param key Chave do no que sera exibido
      */
@@ -167,15 +179,8 @@ public class LinkedList extends Node implements MyLists<LinkedList> {
         return aux != null;
     }
 
-    /**
-     * Metodo que anexa novos nos para a sublista dentro de um intervalo especifico
-     *
-     * @param node      No iterador de cada funcao
-     * @param response  No raiz que sera retornado
-     * @param fromIndex Chave em que a sublista comecara
-     * @param toIndex   Chave em que a sublista acabara (inclui ate toIndex - 1)
-     */
-    private void generateLinkedList(Node node, LinkedList response, double fromIndex, double toIndex) {
+    private void generateDoublyLinkedList(Node node, DoublyLinkedList response,
+                                          double fromIndex, double toIndex) {
         while (node != null) {
             if (node.getKey() >= fromIndex && node.getKey() < toIndex) {
                 response.addNode(node.getKey());
@@ -187,43 +192,51 @@ public class LinkedList extends Node implements MyLists<LinkedList> {
     }
 
     /**
-     * Metodo que retorna uma nova lista a partir de uma sublista dentro de um intervalo especifico
+     * Metodo que retorna uma nova lista duplamente ligada para uma sublista
+     * dentro de um intervalo especifico
      *
      * @param fromIndex Valor em que comeca a lista
      * @param toIndex   Valor em que a lista acaba (toIndex - 1)
-     * @return BinaryTree
+     * @return DoublyLinkedList
      */
     @Override
-    public LinkedList subList(double fromIndex, double toIndex) {
-        LinkedList response = new LinkedList();
-        generateLinkedList(root, response, fromIndex, toIndex);
+    public DoublyLinkedList subList(double fromIndex, double toIndex) {
+        DoublyLinkedList response = new DoublyLinkedList();
+        generateDoublyLinkedList(root, response, fromIndex, toIndex);
         return response;
     }
 
     /**
-     * Metodo que exibe a maior chave a partir de uma lista
+     * Metodo que exibe a maior chave a partir de uma lista duplamente ligada
      *
-     * @param linkedList Tipo da lista utilizada
+     * @param doublyLinkedList Tipo da lista utilizada
      * @return double
      */
     @Override
-    public double findMax(LinkedList linkedList) {
-        Node aux = linkedList;
-        while (aux.hasNext()) {
-            aux = aux.getNext();
+    public double findMax(DoublyLinkedList doublyLinkedList) {
+        if (doublyLinkedList.isEmpty()) {
+            return Integer.MAX_VALUE;
+        } else {
+            Node aux = doublyLinkedList;
+            while (aux.hasNext()) {
+                aux = aux.getNext();
+            }
+            return aux.getKey();
         }
-        return aux.getKey();
     }
 
     /**
-     * Metodo que exibe a menor chave a partir de uma lista
+     * Metodo que exibe a menor chave a partir de uma lista duplamente ligada
      *
-     * @param linkedList Tipo da lista utilizada
+     * @param doublyLinkedList Tipo da lista utilizada
      * @return double
      */
     @Override
-    public double findMin(LinkedList linkedList) {
-        return linkedList.root.getKey();
+    public double findMin(DoublyLinkedList doublyLinkedList) {
+        if (doublyLinkedList.isEmpty()) {
+            return Integer.MIN_VALUE;
+        } else {
+            return root.getKey();
+        }
     }
-
 }
