@@ -71,7 +71,7 @@ public interface MyMatrices<T extends NodeXY> {
      * @param toX   Valor em que a lista acaba (toIndex - 1)
      * @param fromY Valor em que comeca a lista
      * @param toY   Valor em que a lista acaba (toIndex - 1)
-     * @return
+     * @return NodeXY
      */
     NodeXY subList(int fromX, int toX, int fromY, int toY);
 

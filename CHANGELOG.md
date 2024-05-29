@@ -28,3 +28,8 @@
 
 ### ➖ Removed
 - Planejamento para implementacao de Heap
+
+## 🔩 [2.1.1] - 28-05-2024
+
+### ➖ Changed
+- Testes unitarios movidos para uma pasta separada
